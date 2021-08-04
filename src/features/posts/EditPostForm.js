@@ -10,22 +10,38 @@ export const EditPostForm = ({ match }) => {
   const post = useSelector((state) =>
     state.posts.find((post) => post.id === postId)
   )
+  const users = useSelector((state) => state.users)
 
   const [title, setTitle] = useState(post.title)
   const [content, setContent] = useState(post.content)
+  const [userId, setUserId] = useState(post.userId)
 
   const dispatch = useDispatch()
   const history = useHistory()
 
   const onTitleChanged = (e) => setTitle(e.target.value)
   const onContentChanged = (e) => setContent(e.target.value)
+  const onAuthorChanged = (e) => setUserId(e.target.value)
 
   const onSavePostClicked = () => {
     if (title && content) {
-      dispatch(postUpdated({ id: postId, title: title, content: content }))
+      dispatch(
+        postUpdated({
+          id: postId,
+          title: title,
+          content: content,
+          userId: userId,
+        })
+      )
       history.push(`/posts/${postId}`)
     }
   }
+
+  const userOptions = users.map((user) => (
+    <option key={user.id} value={user.id}>
+      {user.name}
+    </option>
+  ))
 
   return (
     <section>
@@ -40,6 +56,11 @@ export const EditPostForm = ({ match }) => {
           value={title}
           onChange={onTitleChanged}
         />
+        <label htmlFor="postAuthor">Author:</label>
+        <select id="postAuthor" value={userId} onChange={onAuthorChanged}>
+          <option value=""></option>
+          {userOptions}
+        </select>
         <label htmlFor="postContent">内容：</label>
         <input
           type="text"
