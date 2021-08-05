@@ -2,19 +2,17 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
-import { postUpdated } from './postSlice'
+import { postUpdated, selectPostById } from './postSlice'
 
 export const EditPostForm = ({ match }) => {
   const { postId } = match.params
 
-  const post = useSelector((state) =>
-    state.posts.find((post) => post.id === postId)
-  )
+  const post = useSelector((state) => selectPostById(state, postId))
   const users = useSelector((state) => state.users)
 
   const [title, setTitle] = useState(post.title)
   const [content, setContent] = useState(post.content)
-  const [userId, setUserId] = useState(post.userId)
+  const [userId, setUserId] = useState(post.user)
 
   const dispatch = useDispatch()
   const history = useHistory()
@@ -30,7 +28,7 @@ export const EditPostForm = ({ match }) => {
           id: postId,
           title: title,
           content: content,
-          userId: userId,
+          user: userId,
         })
       )
       history.push(`/posts/${postId}`)
